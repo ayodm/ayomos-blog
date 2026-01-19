@@ -54,9 +54,11 @@ defmodule AyomosBlogWeb.Plugs.AdminAuth do
 
   @doc """
   Checks if the provided code matches the admin code.
+  Uses constant-time comparison to prevent timing attacks.
   """
   def valid_code?(code) do
-    code == @admin_code
+    # Use Plug.Crypto for constant-time comparison
+    Plug.Crypto.secure_compare(code || "", @admin_code)
   end
 
   @doc """
@@ -64,5 +66,31 @@ defmodule AyomosBlogWeb.Plugs.AdminAuth do
   """
   def logout(conn) do
     delete_session(conn, @admin_token_key)
+  end
+
+  @doc """
+  Logs admin access attempts for security auditing.
+  """
+  def log_access_attempt(conn, success) do
+    ip = get_client_ip(conn)
+    timestamp = DateTime.utc_now() |> DateTime.to_iso8601()
+    status = if success, do: "SUCCESS", else: "FAILED"
+
+    # Log to console/file
+    require Logger
+    Logger.warning("[ADMIN_ACCESS] #{status} from IP: #{ip} at #{timestamp}")
+  end
+
+  defp get_client_ip(conn) do
+    forwarded = Plug.Conn.get_req_header(conn, "fly-client-ip") |> List.first()
+    x_forwarded = Plug.Conn.get_req_header(conn, "x-forwarded-for") |> List.first()
+    x_real_ip = Plug.Conn.get_req_header(conn, "x-real-ip") |> List.first()
+
+    cond do
+      forwarded -> forwarded
+      x_forwarded -> x_forwarded |> String.split(",") |> List.first() |> String.trim()
+      x_real_ip -> x_real_ip
+      true -> conn.remote_ip |> :inet.ntoa() |> to_string()
+    end
   end
 end

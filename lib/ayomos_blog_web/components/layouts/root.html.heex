@@ -69,6 +69,9 @@
             <a href="/blog" class="text-sm font-medium hover:text-primary transition-colors uppercase tracking-wider">
               Blog
             </a>
+            <a href="/contact" class="text-sm font-medium hover:text-primary transition-colors uppercase tracking-wider">
+              Contact
+            </a>
             <Layouts.theme_toggle />
           </div>
         </div>
@@ -195,5 +198,70 @@
         document.getElementById('footer-logo')?.addEventListener('click', handleSecretClick);
       })();
     </script>
+    
+    <!-- Source Protection (Production Only) -->
+    <%= if Application.get_env(:ayomos_blog, :env) == :prod do %>
+    <script>
+      (() => {
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          return false;
+        });
+        
+        // Disable common dev tools keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+          // F12
+          if (e.key === 'F12') {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+Shift+I / Cmd+Shift+I (Inspector)
+          if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+Shift+J / Cmd+Shift+J (Console)
+          if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'J') {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+Shift+C / Cmd+Shift+C (Element picker)
+          if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+            e.preventDefault();
+            return false;
+          }
+          // Ctrl+U / Cmd+U (View source)
+          if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+            e.preventDefault();
+            return false;
+          }
+        });
+        
+        // Detect dev tools via console timing (basic detection)
+        const detectDevTools = () => {
+          const threshold = 160;
+          const before = new Date().getTime();
+          debugger;
+          const after = new Date().getTime();
+          if (after - before > threshold) {
+            // Dev tools detected - could redirect or log
+            console.clear();
+          }
+        };
+        
+        // Disable text selection on sensitive elements
+        document.querySelectorAll('.no-select').forEach(el => {
+          el.style.userSelect = 'none';
+          el.style.webkitUserSelect = 'none';
+        });
+        
+        // Console warning
+        console.log('%c⚠️ STOP!', 'color: red; font-size: 48px; font-weight: bold;');
+        console.log('%cThis is a browser feature intended for developers.', 'font-size: 16px;');
+        console.log('%cIf someone told you to paste something here, it is likely a scam.', 'font-size: 14px; color: gray;');
+      })();
+    </script>
+    <% end %>
   </body>
 </html>

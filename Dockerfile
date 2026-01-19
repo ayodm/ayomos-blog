@@ -22,7 +22,7 @@ FROM ${BUILDER_IMAGE} AS builder
 
 # install build dependencies
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential git \
+  && apt-get install -y --no-install-recommends build-essential git curl ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
 # prepare build dir
@@ -46,7 +46,8 @@ RUN mkdir config
 COPY config/config.exs config/${MIX_ENV}.exs config/
 RUN mix deps.compile
 
-RUN mix assets.setup
+# Download tailwind and esbuild binaries with retry logic
+RUN for i in 1 2 3 4 5; do mix assets.setup && break || sleep 5; done
 
 COPY priv priv
 

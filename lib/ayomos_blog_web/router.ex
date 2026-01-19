@@ -24,6 +24,8 @@ defmodule AyomosBlogWeb.Router do
 
     get "/", PageController, :home
     get "/about", PageController, :about
+    get "/contact", ContactController, :new
+    post "/contact", ContactController, :create
     get "/blog", PostController, :blog_index
     get "/blog/:slug", PostController, :show_by_slug
 

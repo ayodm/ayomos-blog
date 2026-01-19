@@ -51,5 +51,10 @@ defmodule AyomosBlogWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+
+  # Security plugs
+  plug AyomosBlogWeb.Plugs.SecurityHeaders
+  plug AyomosBlogWeb.Plugs.RateLimiter
+
   plug AyomosBlogWeb.Router
 end

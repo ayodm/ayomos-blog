@@ -16,16 +16,31 @@ defmodule AyomosBlogWeb.PageController do
   end
 
   def verify_admin(conn, %{"code" => code}) do
-    case AdminAuth.verify_code(conn, code) do
-      {:ok, conn} ->
-        conn
-        |> put_flash(:info, "Access granted. Welcome back.")
-        |> redirect(to: "/admin")
+    if AdminAuth.valid_code?(code) do
+      AdminAuth.log_access_attempt(conn, true)
 
-      {:error, _conn} ->
-        conn
-        |> put_flash(:error, "Invalid code")
-        |> redirect(to: "/")
+      {:ok, conn} = AdminAuth.verify_code(conn, code)
+      conn
+      |> put_flash(:info, "Access granted. Welcome back.")
+      |> redirect(to: "/admin")
+    else
+      AdminAuth.log_access_attempt(conn, false)
+
+      # Add delay to slow down brute force attacks
+      Process.sleep(2000)
+
+      conn
+      |> put_flash(:error, "Access denied")
+      |> redirect(to: "/")
     end
+  end
+
+  # Handle missing code parameter
+  def verify_admin(conn, _params) do
+    AdminAuth.log_access_attempt(conn, false)
+
+    conn
+    |> put_flash(:error, "Access denied")
+    |> redirect(to: "/")
   end
 end

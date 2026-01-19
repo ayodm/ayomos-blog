@@ -1,0 +1,202 @@
+<!-- Contact Page - Brutalist Design -->
+<div class="min-h-screen bg-base-100">
+  <!-- Hero Section -->
+  <section class="border-b-4 border-base-content py-16">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h1 class="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-4">
+        GET IN TOUCH
+      </h1>
+      <p class="text-xl text-base-content/70 max-w-2xl mx-auto">
+        Have a project in mind? Want to collaborate? Just want to say hi? 
+        Drop me a message and I'll get back to you as soon as possible.
+      </p>
+    </div>
+  </section>
+
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <div class="grid md:grid-cols-3 gap-8">
+      
+      <!-- Contact Info Sidebar -->
+      <div class="md:col-span-1 space-y-6">
+        <div class="border-2 border-base-content p-6">
+          <h3 class="font-bold uppercase tracking-wider mb-4 text-sm">Contact Info</h3>
+          
+          <div class="space-y-4 text-sm">
+            <div class="flex items-start gap-3">
+              <span class="text-primary font-mono">→</span>
+              <div>
+                <p class="font-bold">Email</p>
+                <p class="text-base-content/70">info@ayomos.com</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start gap-3">
+              <span class="text-primary font-mono">→</span>
+              <div>
+                <p class="font-bold">Location</p>
+                <p class="text-base-content/70">Austin, TX</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start gap-3">
+              <span class="text-primary font-mono">→</span>
+              <div>
+                <p class="font-bold">Response Time</p>
+                <p class="text-base-content/70">24-48 hours</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-2 border-base-content p-6 bg-base-content text-base-100">
+          <h3 class="font-bold uppercase tracking-wider mb-4 text-sm">Connect</h3>
+          <div class="space-y-2 text-sm">
+            <a href="https://linkedin.com/in/ayomos" target="_blank" rel="noopener noreferrer" 
+               class="block hover:text-primary transition-colors">
+              → LinkedIn
+            </a>
+            <a href="https://github.com/ayodm" target="_blank" rel="noopener noreferrer"
+               class="block hover:text-primary transition-colors">
+              → GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="md:col-span-2">
+        <div class="border-2 border-base-content">
+          <div class="bg-base-content text-base-100 px-6 py-3">
+            <h2 class="font-bold uppercase tracking-wider text-sm">Send a Message</h2>
+          </div>
+          
+          <div class="p-6">
+            <%= if @success do %>
+              <div class="text-center py-12">
+                <div class="text-6xl mb-4">✓</div>
+                <h3 class="text-2xl font-bold mb-2">Message Sent!</h3>
+                <p class="text-base-content/70 mb-6">Thank you for reaching out. I'll get back to you soon.</p>
+                <a href="/" class="inline-block border-2 border-base-content px-6 py-2 font-bold uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors">
+                  Back to Home
+                </a>
+              </div>
+            <% else %>
+              <%= if @errors != [] do %>
+                <div class="border-2 border-red-700 bg-red-50 dark:bg-red-900/20 p-4 mb-6">
+                  <p class="font-bold text-red-700 dark:text-red-400 mb-2">Please fix the following:</p>
+                  <ul class="list-disc list-inside text-red-700 dark:text-red-400 text-sm">
+                    <%= for error <- @errors do %>
+                      <li><%= error %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              <% end %>
+
+              <form action="/contact" method="post" id="contact-form" class="space-y-6">
+                <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                
+                <!-- Honeypot field - hidden from humans, visible to bots -->
+                <div style="position: absolute; left: -9999px; opacity: 0; height: 0;" aria-hidden="true">
+                  <label for="website">Leave this field empty</label>
+                  <input type="text" name="contact[website]" id="website" tabindex="-1" autocomplete="off" />
+                </div>
+                
+                <!-- Form timing token to detect bots -->
+                <input type="hidden" name="contact[form_token]" value={System.system_time(:second)} />
+
+                <div class="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label for="name" class="block text-sm font-bold uppercase tracking-wider mb-2">
+                      Name <span class="text-red-600">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      name="contact[name]" 
+                      id="name" 
+                      required
+                      value={assigns[:form_data]["name"] || ""}
+                      class="w-full border-2 border-base-content px-4 py-3 bg-base-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label for="email" class="block text-sm font-bold uppercase tracking-wider mb-2">
+                      Email <span class="text-red-600">*</span>
+                    </label>
+                    <input 
+                      type="email" 
+                      name="contact[email]" 
+                      id="email" 
+                      required
+                      value={assigns[:form_data]["email"] || ""}
+                      class="w-full border-2 border-base-content px-4 py-3 bg-base-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label for="subject" class="block text-sm font-bold uppercase tracking-wider mb-2">
+                    Subject
+                  </label>
+                  <input 
+                    type="text" 
+                    name="contact[subject]" 
+                    id="subject"
+                    value={assigns[:form_data]["subject"] || ""}
+                    class="w-full border-2 border-base-content px-4 py-3 bg-base-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="What's this about?"
+                  />
+                </div>
+
+                <div>
+                  <label for="message" class="block text-sm font-bold uppercase tracking-wider mb-2">
+                    Message <span class="text-red-600">*</span>
+                  </label>
+                  <textarea 
+                    name="contact[message]" 
+                    id="message" 
+                    rows="6"
+                    required
+                    minlength="10"
+                    maxlength="5000"
+                    class="w-full border-2 border-base-content px-4 py-3 bg-base-100 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                    placeholder="Your message..."
+                  ><%= assigns[:form_data]["message"] || "" %></textarea>
+                  <p class="text-xs text-base-content/50 mt-1">Min 10 characters, max 5000. No links allowed.</p>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <p class="text-xs text-base-content/50">
+                    <span class="text-red-600">*</span> Required fields
+                  </p>
+                  <button 
+                    type="submit" 
+                    class="bg-base-content text-base-100 px-8 py-3 font-bold uppercase tracking-wider hover:bg-primary transition-colors brutalist-shadow-sm"
+                  >
+                    Send Message →
+                  </button>
+                </div>
+              </form>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simple client-side validation enhancement
+  document.getElementById('contact-form')?.addEventListener('submit', function(e) {
+    const message = document.getElementById('message').value;
+    const urlPattern = /(https?:\/\/|www\.|\.com\/|\.net\/|\.org\/)/i;
+    
+    if (urlPattern.test(message)) {
+      e.preventDefault();
+      alert('Links are not allowed in messages for security reasons.');
+      return false;
+    }
+  });
+</script>
