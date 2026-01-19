@@ -58,8 +58,8 @@
             </span>
           </a>
           
-          <!-- Navigation Links -->
-          <div class="flex items-center gap-6">
+          <!-- Desktop Navigation Links -->
+          <div class="hidden md:flex items-center gap-6">
             <a href="/" class="text-sm font-medium hover:text-primary transition-colors uppercase tracking-wider">
               Home
             </a>
@@ -74,9 +74,104 @@
             </a>
             <Layouts.theme_toggle />
           </div>
+          
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden flex items-center gap-4">
+            <Layouts.theme_toggle />
+            <button 
+              id="mobile-menu-btn" 
+              class="relative w-10 h-10 flex items-center justify-center border-2 border-base-content hover:bg-base-content hover:text-base-100 transition-colors"
+              onclick="toggleMobileMenu()"
+              aria-label="Toggle menu"
+            >
+              <!-- Hamburger lines (shown when closed) -->
+              <div id="hamburger-icon" class="flex flex-col justify-center items-center gap-1.5 transition-all duration-300">
+                <span class="block w-5 h-0.5 bg-current transition-all duration-300 origin-center" id="line-1"></span>
+                <span class="block w-5 h-0.5 bg-current transition-all duration-300 origin-center" id="line-2"></span>
+              </div>
+              <!-- AM Logo (shown when open) -->
+              <div id="am-icon" class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <!-- A -->
+                  <path d="M6 18L12 6L18 18M8 14H16" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- M overlay -->
+                  <path d="M4 18V10L8 14L12 10L16 14L20 10V18" stroke-linecap="round" stroke-linejoin="round" class="opacity-60"/>
+                </svg>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mobile Dropdown Menu -->
+      <div id="mobile-menu" class="md:hidden hidden border-t-2 border-base-content bg-base-100">
+        <div class="px-4 py-4 space-y-2">
+          <a href="/" class="block py-3 px-4 text-sm font-bold uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors border-2 border-transparent hover:border-base-content">
+            Home
+          </a>
+          <a href="/about" class="block py-3 px-4 text-sm font-bold uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors border-2 border-transparent hover:border-base-content">
+            About
+          </a>
+          <a href="/blog" class="block py-3 px-4 text-sm font-bold uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors border-2 border-transparent hover:border-base-content">
+            Blog
+          </a>
+          <a href="/contact" class="block py-3 px-4 text-sm font-bold uppercase tracking-wider bg-primary text-primary-content hover:bg-primary/90 transition-colors">
+            Contact →
+          </a>
         </div>
       </div>
     </nav>
+    
+    <script>
+      function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        const hamburger = document.getElementById('hamburger-icon');
+        const amIcon = document.getElementById('am-icon');
+        const line1 = document.getElementById('line-1');
+        const line2 = document.getElementById('line-2');
+        const isOpen = !menu.classList.contains('hidden');
+        
+        if (isOpen) {
+          // Close menu
+          menu.classList.add('hidden');
+          hamburger.classList.remove('opacity-0');
+          amIcon.classList.add('opacity-0');
+          amIcon.classList.remove('opacity-100');
+          line1.style.transform = '';
+          line2.style.transform = '';
+        } else {
+          // Open menu
+          menu.classList.remove('hidden');
+          hamburger.classList.add('opacity-0');
+          amIcon.classList.remove('opacity-0');
+          amIcon.classList.add('opacity-100');
+          // Animate lines into X
+          line1.style.transform = 'rotate(45deg) translateY(4px)';
+          line2.style.transform = 'rotate(-45deg) translateY(-4px)';
+        }
+      }
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', function(e) {
+        const menu = document.getElementById('mobile-menu');
+        const btn = document.getElementById('mobile-menu-btn');
+        if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+          if (!menu.classList.contains('hidden')) {
+            toggleMobileMenu();
+          }
+        }
+      });
+      
+      // Close menu on window resize to desktop
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) {
+          const menu = document.getElementById('mobile-menu');
+          if (menu && !menu.classList.contains('hidden')) {
+            toggleMobileMenu();
+          }
+        }
+      });
+    </script>
     
     <!-- Main Content -->
     <main class="pt-16">
