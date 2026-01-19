@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <meta name="description" content="Ayo Mosanya - Data Analytics in Enterprise Risk Management" />
+    <meta name="author" content="Ayo Mosanya" />
+    
+    <.live_title default="AYOMOS" suffix=" // Risk & Analytics">
+      {assigns[:page_title]}
+    </.live_title>
+    
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
+    </script>
+    
+    <script>
+      (() => {
+        const setTheme = (theme) => {
+          if (theme === "system") {
+            localStorage.setItem("phx:theme", "system");
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
+          } else {
+            localStorage.setItem("phx:theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        };
+        
+        // Always apply saved theme on page load
+        const savedTheme = localStorage.getItem("phx:theme");
+        if (savedTheme === "system") {
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.setAttribute("data-theme", prefersDark ? "dark" : "light");
+        } else if (savedTheme) {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+        } else {
+          // Default to dark if no preference saved
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+        
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "dark"));
+        window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen bg-base-100 text-base-content grid-pattern noise-overlay">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-base-100/95 backdrop-blur-sm border-b-2 border-base-content">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <a href="/" class="flex items-center gap-3 group">
+            <span id="nav-logo" class="text-2xl font-bold tracking-tighter glitch cursor-pointer select-none">AYOMOS</span>
+            <span class="hidden sm:inline text-xs font-mono text-base-content/60 border border-base-content/30 px-2 py-1">
+              v1.0
+            </span>
+          </a>
+          
+          <!-- Navigation Links -->
+          <div class="flex items-center gap-6">
+            <a href="/" class="text-sm font-medium hover:text-primary transition-colors uppercase tracking-wider">
+              Home
+            </a>
+            <a href="/about" class="text-sm font-medium hover:text-primary transition-colors uppercase tracking-wider">
+              About
+            </a>
+            <a href="/blog" class="text-sm font-medium hover:text-primary transition-colors uppercase tracking-wider">
+              Blog
+            </a>
+            <Layouts.theme_toggle />
+          </div>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="pt-16">
+      {@inner_content}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="border-t-2 border-base-content mt-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 id="footer-logo" class="text-lg font-bold mb-4 uppercase tracking-wider cursor-pointer select-none">AYOMOS.COM</h3>
+            <p class="text-sm text-base-content/70 font-mono">
+              Data Analytics &<br/>Enterprise Risk Management
+            </p>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4 uppercase tracking-wider">Connect</h3>
+            <div class="flex flex-col gap-2 text-sm">
+              <a href="https://linkedin.com/in/ayomosanya" class="brutalist-link inline-block w-fit hover:text-primary">
+                LinkedIn →
+              </a>
+              <a href="mailto:ayo@ayomos.com" class="brutalist-link inline-block w-fit hover:text-primary">
+                Email →
+              </a>
+            </div>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-4 uppercase tracking-wider">Status</h3>
+            <div class="font-mono text-sm text-base-content/70">
+              <p>SYS: ONLINE</p>
+              <p>LOC: NYC / GLOBAL</p>
+              <p>© 2026</p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-12 pt-8 border-t border-base-content/20 text-center">
+          <p class="font-mono text-xs text-base-content/50">
+            Built with Elixir & Phoenix // Hosted on ayomos.com
+          </p>
+        </div>
+      </div>
+    </footer>
+    
+    <!-- Admin Access Modal -->
+    <dialog id="admin-modal" class="modal">
+      <div class="modal-box bg-base-100 border-2 border-base-content max-w-sm">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xl">🔐</span>
+          <h3 class="font-bold text-lg font-mono">SYSTEM ACCESS</h3>
+        </div>
+        <form method="post" action="/verify-admin" class="space-y-4">
+          <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+          <div>
+            <label class="block text-sm font-mono text-base-content/70 mb-2">Enter access code:</label>
+            <input 
+              type="password" 
+              name="code" 
+              class="w-full px-4 py-2 bg-base-200 border-2 border-base-content font-mono focus:border-primary focus:outline-none"
+              placeholder="••••••••"
+              autocomplete="off"
+            />
+          </div>
+          <div class="flex gap-2">
+            <button 
+              type="submit" 
+              class="flex-1 px-4 py-2 bg-primary text-primary-content font-bold uppercase tracking-wider hover:bg-primary/80"
+            >
+              Verify
+            </button>
+            <button 
+              type="button" 
+              class="px-4 py-2 border-2 border-base-content font-bold uppercase tracking-wider hover:bg-base-content hover:text-base-100"
+              onclick="document.getElementById('admin-modal').close()"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+    
+    <!-- Secret Admin Click Counter -->
+    <script>
+      (() => {
+        let clickCount = 0;
+        let clickTimer = null;
+        const requiredClicks = 13;
+        
+        function handleSecretClick(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          clickCount++;
+          
+          // Reset timer on each click
+          if (clickTimer) clearTimeout(clickTimer);
+          
+          // Reset count after 3 seconds of no clicks
+          clickTimer = setTimeout(() => {
+            clickCount = 0;
+          }, 3000);
+          
+          // Show modal when 13 clicks reached
+          if (clickCount >= requiredClicks) {
+            clickCount = 0;
+            if (clickTimer) clearTimeout(clickTimer);
+            document.getElementById('admin-modal').showModal();
+          }
+        }
+        
+        // Attach to nav logo
+        document.getElementById('nav-logo')?.addEventListener('click', handleSecretClick);
+        
+        // Attach to footer logo
+        document.getElementById('footer-logo')?.addEventListener('click', handleSecretClick);
+      })();
+    </script>
+  </body>
+</html>

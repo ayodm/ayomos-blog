@@ -1,0 +1,277 @@
+<!-- Brutalist Admin Dashboard -->
+<div class="min-h-screen bg-base-100 text-base-content font-mono">
+  <!-- Admin Header -->
+  <header class="border-b-2 border-base-content bg-base-100 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <h1 class="text-2xl font-bold uppercase tracking-wider">ADMIN.sys</h1>
+          <span class="text-xs border border-base-content/30 px-2 py-1">v1.0</span>
+        </div>
+        <div class="flex items-center gap-4 text-sm">
+          <span class="text-base-content/60">{Calendar.strftime(DateTime.utc_now(), "%Y.%m.%d %H:%M")}</span>
+          <a href="/" target="_blank" class="border border-base-content px-3 py-1 hover:bg-base-content hover:text-base-100 transition-colors uppercase text-xs tracking-wider">
+            View Site →
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Quick Nav -->
+    <nav class="flex gap-2 mb-8">
+      <a href="/admin" class="bg-base-content text-base-100 px-4 py-2 text-sm uppercase tracking-wider">
+        Dashboard
+      </a>
+      <a href="/admin/posts" class="border border-base-content px-4 py-2 text-sm uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors">
+        All Posts
+      </a>
+      <a href="/admin/posts/new" class="border border-base-content px-4 py-2 text-sm uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors">
+        + New Post
+      </a>
+    </nav>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="border-2 border-base-content p-4">
+        <div class="text-xs text-base-content/60 uppercase tracking-wider mb-2">Total Views</div>
+        <div class="text-4xl font-bold">{@stats.total}</div>
+      </div>
+      <div class="border-2 border-base-content p-4">
+        <div class="text-xs text-base-content/60 uppercase tracking-wider mb-2">Today</div>
+        <div class="text-4xl font-bold text-emerald-500">{@stats.today}</div>
+      </div>
+      <div class="border-2 border-base-content p-4">
+        <div class="text-xs text-base-content/60 uppercase tracking-wider mb-2">7 Days</div>
+        <div class="text-4xl font-bold text-blue-500">{@stats.last_7_days}</div>
+      </div>
+      <div class="border-2 border-base-content p-4">
+        <div class="text-xs text-base-content/60 uppercase tracking-wider mb-2">Unique Today</div>
+        <div class="text-4xl font-bold text-amber-500">{@stats.unique_today}</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Main Content Area -->
+      <div class="lg:col-span-2 space-y-6">
+        
+        <!-- Traffic Chart -->
+        <div class="border-2 border-base-content">
+          <div class="bg-base-content text-base-100 px-4 py-2 flex items-center justify-between">
+            <span class="text-sm uppercase tracking-wider">TRAFFIC.chart // Last 14 Days</span>
+            <div class="flex gap-2 text-xs">
+              <span>_</span>
+              <span>□</span>
+              <span>×</span>
+            </div>
+          </div>
+          <div class="p-4 bg-base-100">
+            <!-- Bar Chart Visualization -->
+            <div class="flex items-end gap-1 h-40" id="traffic-chart">
+              <%= for {date, count} <- @views_by_day do %>
+                <% max_count = Enum.max_by(@views_by_day, fn {_, c} -> c end) |> elem(1) %>
+                <% height = if max_count > 0, do: (count / max_count) * 100, else: 0 %>
+                <div class="flex-1 flex flex-col items-center gap-1 group">
+                  <div 
+                    class="w-full bg-emerald-500 hover:bg-emerald-400 transition-colors relative"
+                    style={"height: #{max(height, 2)}%"}
+                    title={"#{date}: #{count} views"}
+                  >
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {count}
+                    </div>
+                  </div>
+                  <div class="text-[8px] text-base-content/40 rotate-45 origin-left whitespace-nowrap">
+                    {String.slice(date, 5, 5)}
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Posts Table -->
+        <div class="border-2 border-base-content">
+          <div class="bg-base-content text-base-100 px-4 py-2 flex items-center justify-between">
+            <span class="text-sm uppercase tracking-wider">POSTS.db // {length(@posts)} entries</span>
+            <div class="flex gap-2 text-xs">
+              <span>_</span>
+              <span>□</span>
+              <span>×</span>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="border-b-2 border-base-content">
+                <tr>
+                  <th class="text-left p-3 uppercase text-xs tracking-wider">Title</th>
+                  <th class="text-left p-3 uppercase text-xs tracking-wider w-24">Status</th>
+                  <th class="text-left p-3 uppercase text-xs tracking-wider w-28">Date</th>
+                  <th class="text-left p-3 uppercase text-xs tracking-wider w-24">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= if @posts == [] do %>
+                  <tr>
+                    <td colspan="4" class="p-8 text-center text-base-content/50">
+                      No posts found. <a href="/admin/posts/new" class="underline hover:text-base-content">Create your first post →</a>
+                    </td>
+                  </tr>
+                <% else %>
+                  <%= for {post, idx} <- Enum.with_index(@posts) do %>
+                    <tr class={"border-b border-base-content/20 hover:bg-base-content/5 #{if rem(idx, 2) == 1, do: "bg-base-content/5", else: ""}"}>
+                      <td class="p-3">
+                        <a href={~p"/blog/#{post.slug}"} target="_blank" class="hover:underline font-bold">
+                          {post.title}
+                        </a>
+                      </td>
+                      <td class="p-3">
+                        <%= if post.published do %>
+                          <span class="inline-flex items-center gap-1 text-emerald-500">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            Live
+                          </span>
+                        <% else %>
+                          <span class="inline-flex items-center gap-1 text-base-content/50">
+                            <span class="w-2 h-2 rounded-full bg-base-content/30"></span>
+                            Draft
+                          </span>
+                        <% end %>
+                      </td>
+                      <td class="p-3 text-base-content/60">
+                        <%= if post.published_at do %>
+                          {Calendar.strftime(post.published_at, "%Y-%m-%d")}
+                        <% else %>
+                          —
+                        <% end %>
+                      </td>
+                      <td class="p-3">
+                        <a href={~p"/admin/posts/#{post}/edit"} class="hover:underline mr-3">Edit</a>
+                        <.link href={~p"/admin/posts/#{post}"} method="delete" data-confirm="Delete this post?" class="text-red-500 hover:underline">
+                          Del
+                        </.link>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        
+        <!-- System Status -->
+        <div class="border-2 border-base-content">
+          <div class="bg-base-content text-base-100 px-4 py-2 flex items-center justify-between">
+            <span class="text-sm uppercase tracking-wider">SYSTEM.status</span>
+            <div class="flex gap-2 text-xs">
+              <span>_</span>
+              <span>□</span>
+              <span>×</span>
+            </div>
+          </div>
+          <div class="p-4 space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-base-content/60">Status</span>
+              <span class="text-emerald-500 font-bold">● ONLINE</span>
+            </div>
+            <div class="flex justify-between border-t border-base-content/20 pt-3">
+              <span class="text-base-content/60">Posts</span>
+              <span>{length(@posts)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-base-content/60">Published</span>
+              <span>{Enum.count(@posts, & &1.published)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-base-content/60">Drafts</span>
+              <span>{Enum.count(@posts, &(!&1.published))}</span>
+            </div>
+            <div class="flex justify-between border-t border-base-content/20 pt-3">
+              <span class="text-base-content/60">30 Day Views</span>
+              <span>{@stats.last_30_days}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Pages -->
+        <div class="border-2 border-base-content">
+          <div class="bg-base-content text-base-100 px-4 py-2 flex items-center justify-between">
+            <span class="text-sm uppercase tracking-wider">TOP.pages</span>
+            <div class="flex gap-2 text-xs">
+              <span>_</span>
+              <span>□</span>
+              <span>×</span>
+            </div>
+          </div>
+          <div class="p-4 space-y-3 text-sm">
+            <%= if @stats.top_pages == [] do %>
+              <div class="text-center text-base-content/50 py-4">No data yet</div>
+            <% else %>
+              <%= for {path, count} <- @stats.top_pages do %>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-xs">
+                    <span class="truncate max-w-[150px]" title={path}>{path}</span>
+                    <span class="text-blue-500 font-bold">{count}</span>
+                  </div>
+                  <div class="h-1 bg-base-content/10">
+                    <% max_count = Enum.max_by(@stats.top_pages, fn {_, c} -> c end) |> elem(1) %>
+                    <% width = if max_count > 0, do: (count / max_count) * 100, else: 0 %>
+                    <div class="h-full bg-blue-500" style={"width: #{width}%"}></div>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="border-2 border-base-content">
+          <div class="bg-base-content text-base-100 px-4 py-2 flex items-center justify-between">
+            <span class="text-sm uppercase tracking-wider">ACTIVITY.log</span>
+            <div class="flex gap-2 text-xs">
+              <span>_</span>
+              <span>□</span>
+              <span>×</span>
+            </div>
+          </div>
+          <div class="max-h-64 overflow-y-auto">
+            <%= if @recent_views == [] do %>
+              <div class="p-4 text-center text-base-content/50">No activity yet</div>
+            <% else %>
+              <%= for view <- @recent_views do %>
+                <div class="p-3 border-b border-base-content/10 hover:bg-base-content/5 text-xs flex justify-between items-center">
+                  <span class="truncate max-w-[140px]" title={view.path}>{view.path}</span>
+                  <span class="text-base-content/40 font-mono">{Calendar.strftime(view.inserted_at, "%H:%M:%S")}</span>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Quick Terminal -->
+        <div class="border-2 border-base-content">
+          <div class="bg-base-content text-base-100 px-4 py-2 flex items-center justify-between">
+            <span class="text-sm uppercase tracking-wider">TERMINAL.sh</span>
+            <div class="flex gap-2 text-xs">
+              <span>_</span>
+              <span>□</span>
+              <span>×</span>
+            </div>
+          </div>
+          <div class="bg-black text-emerald-400 p-4 text-xs leading-relaxed h-32 overflow-y-auto">
+            <p class="text-white/50">$ ayomos --status</p>
+            <p>SYS: <span class="text-emerald-400">ONLINE</span></p>
+            <p>POSTS: {length(@posts)}</p>
+            <p>VIEWS: {@stats.total}</p>
+            <p class="text-white/50 mt-2">$ _<span class="animate-pulse">▋</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

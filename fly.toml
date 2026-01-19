@@ -1,0 +1,36 @@
+# Fly.io deployment configuration for ayomos.com
+# Deploy with: fly launch && fly deploy
+
+app = "ayomos-blog"
+primary_region = "ewr"  # Newark, NJ - close to NYC
+
+[build]
+
+[deploy]
+  release_command = "/app/bin/migrate"
+
+[env]
+  PHX_HOST = "ayomos.com"
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 1000
+    soft_limit = 1000
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
+
+[mounts]
+  source = "sqlite_data"
+  destination = "/data"

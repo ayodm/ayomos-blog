@@ -1,0 +1,58 @@
+<!-- Brutalist New Post Page -->
+<div class="min-h-screen bg-base-100 text-base-content font-mono">
+  <!-- Admin Header -->
+  <header class="border-b-2 border-base-content bg-base-100 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <h1 class="text-2xl font-bold uppercase tracking-wider">NEW.post</h1>
+          <span class="text-xs border border-base-content/30 px-2 py-1">Draft</span>
+        </div>
+        <div class="flex items-center gap-4 text-sm">
+          <a href="/admin/posts" class="border border-base-content px-3 py-1 hover:bg-base-content hover:text-base-100 transition-colors uppercase text-xs tracking-wider">
+            ← Back to Posts
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <Layouts.flash_group flash={@flash} />
+    
+    <!-- Quick Nav -->
+    <nav class="flex gap-2 mb-8">
+      <a href="/admin" class="border border-base-content px-4 py-2 text-sm uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors">
+        Dashboard
+      </a>
+      <a href="/admin/posts" class="border border-base-content px-4 py-2 text-sm uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors">
+        All Posts
+      </a>
+      <a href="/admin/posts/new" class="bg-base-content text-base-100 px-4 py-2 text-sm uppercase tracking-wider">
+        + New Post
+      </a>
+    </nav>
+
+    <!-- Form Container -->
+    <div class="border-2 border-base-content">
+      <div class="bg-base-content text-base-100 px-4 py-2 flex items-center justify-between">
+        <span class="text-sm uppercase tracking-wider">CREATE // New Blog Post</span>
+        <div class="flex gap-2 text-xs">
+          <span>_</span>
+          <span>□</span>
+          <span>×</span>
+        </div>
+      </div>
+      
+      <div class="p-6">
+        <.post_form changeset={@changeset} action={~p"/admin/posts"} return_to={~p"/admin/posts"} />
+      </div>
+      
+      <!-- Status Bar -->
+      <div class="border-t border-base-content/20 px-4 py-2 flex justify-between text-xs text-base-content/50">
+        <span>New Document</span>
+        <span>AYOMOS CMS v1.0</span>
+      </div>
+    </div>
+  </div>
+</div>

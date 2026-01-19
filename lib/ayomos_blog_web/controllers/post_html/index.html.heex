@@ -1,0 +1,86 @@
+<Layouts.flash_group flash={@flash} />
+
+<!-- Blog Header -->
+<section class="py-20">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Breadcrumb -->
+    <div class="font-mono text-sm text-base-content/50 mb-8">
+      <a href="/" class="hover:text-primary">Home</a> / <span class="text-primary">Blog</span>
+    </div>
+    
+    <div class="flex items-center gap-4 mb-8">
+      <h1 class="text-5xl font-bold tracking-tighter">Blog</h1>
+      <div class="flex-1 h-0.5 bg-base-content/20"></div>
+    </div>
+    
+    <p class="text-xl text-base-content/70 max-w-2xl">
+      Insights on data analytics, enterprise risk management, and the intersection 
+      of technology and strategic decision-making.
+    </p>
+  </div>
+</section>
+
+<!-- Blog Posts List -->
+<section class="pb-20">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <%= if @posts == [] do %>
+      <!-- Empty State -->
+      <div class="border-2 border-dashed border-base-content/30 p-12 text-center">
+        <div class="font-mono text-6xl mb-4 text-base-content/20">[ ]</div>
+        <h3 class="text-xl font-bold mb-2">No Posts Yet</h3>
+        <p class="text-base-content/60">
+          Content is coming soon. Check back later for insights on data analytics 
+          and enterprise risk management.
+        </p>
+      </div>
+    <% else %>
+      <!-- Posts Grid -->
+      <div class="space-y-8">
+        <%= for post <- @posts do %>
+          <article class="border-2 border-base-content/30 p-6 md:p-8 post-card bg-base-100 group">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
+              <div class="font-mono text-sm text-base-content/50">
+                <%= if post.published_at do %>
+                  <%= Calendar.strftime(post.published_at, "%Y.%m.%d") %>
+                <% else %>
+                  DRAFT
+                <% end %>
+              </div>
+              <div class="hidden md:block w-24 h-0.5 bg-base-content/20 group-hover:bg-primary transition-colors"></div>
+            </div>
+            
+            <h2 class="text-2xl md:text-3xl font-bold mb-4 group-hover:text-primary transition-colors">
+              <a href={~p"/blog/#{post.slug}"} class="hover:underline">
+                {post.title}
+              </a>
+            </h2>
+            
+            <%= if post.excerpt do %>
+              <p class="text-base-content/70 mb-6 leading-relaxed">
+                {post.excerpt}
+              </p>
+            <% end %>
+            
+            <a href={~p"/blog/#{post.slug}"} class="inline-flex items-center gap-2 text-sm font-bold text-primary uppercase tracking-wider group-hover:gap-4 transition-all">
+              Read Article <span>→</span>
+            </a>
+          </article>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<!-- Newsletter/CTA Section -->
+<section class="py-20 bg-base-200">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-2xl font-bold mb-4 uppercase tracking-wider">Stay Updated</h2>
+    <p class="text-base-content/70 mb-8">
+      Follow along as I share insights on risk management and data analytics.
+    </p>
+    <a href="https://linkedin.com/in/ayomosanya" target="_blank" class="inline-flex items-center gap-2 px-8 py-4 border-2 border-base-content font-bold uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors">
+      Connect on LinkedIn
+      <span>→</span>
+    </a>
+  </div>
+</section>

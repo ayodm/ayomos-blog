@@ -1,0 +1,189 @@
+<Layouts.flash_group flash={@flash} />
+
+<!-- Hero Section -->
+<section class="min-h-[90vh] flex items-center relative overflow-hidden">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <!-- Left Column -->
+      <div class="space-y-8">
+        <!-- Terminal-style intro -->
+        <div class="font-mono text-sm text-primary">
+          <span class="opacity-60">$</span> whoami
+        </div>
+        
+        <h1 class="text-5xl sm:text-7xl font-bold tracking-tighter leading-none">
+          AYO<br/>
+          <span class="text-primary">MOSANYA</span>
+        </h1>
+        
+        <div class="border-l-4 border-primary pl-6 space-y-4">
+          <p class="text-xl sm:text-2xl font-light text-base-content/80">
+            Data Analytics & AI Engineer
+          </p>
+          <p class="text-base text-base-content/60 max-w-lg">
+            Combining <strong class="text-primary">Data Analytics, Enterprise Risk Management & AI Engineering</strong> 
+            to automate reporting, answer complex business questions, 
+            and transform risk data into executive-ready insights.
+          </p>
+        </div>
+        
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap gap-4 pt-4">
+          <a href="/Ayo_Mosanya_AI_Engineer_Resume.pdf" download class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-content font-bold uppercase tracking-wider hover:translate-x-1 hover:-translate-y-1 transition-transform brutalist-shadow-sm">
+            Download Resume
+            <span class="text-lg">↓</span>
+          </a>
+          <a href="/about" class="inline-flex items-center gap-2 px-6 py-3 border-2 border-base-content font-bold uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors">
+            About Me
+          </a>
+        </div>
+      </div>
+      
+      <!-- Right Column - ASCII Art / Visual -->
+      <div class="hidden lg:block">
+        <div class="font-mono text-xs leading-tight text-primary/40 select-none">
+          <pre class="ascii-art text-[0.4rem] sm:text-[0.5rem]">
+     █████╗ ██╗    ███████╗███╗   ██╗ ██████╗ 
+    ██╔══██╗██║    ██╔════╝████╗  ██║██╔════╝ 
+    ███████║██║    █████╗  ██╔██╗ ██║██║  ███╗
+    ██╔══██║██║    ██╔══╝  ██║╚██╗██║██║   ██║
+    ██║  ██║██║    ███████╗██║ ╚████║╚██████╔╝
+    ╚═╝  ╚═╝╚═╝    ╚══════╝╚═╝  ╚═══╝ ╚═════╝ 
+    
+    ██████╗  █████╗ ████████╗ █████╗ 
+    ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗
+    ██║  ██║███████║   ██║   ███████║
+    ██████╔╝██║  ██║   ██║   ██║  ██║
+    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝
+          </pre>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 gap-4 mt-8">
+          <div class="border-2 border-base-content/20 p-4">
+            <div class="text-3xl font-bold text-primary font-mono">23K+</div>
+            <div class="text-sm text-base-content/60 uppercase tracking-wider">Monthly Snapshots</div>
+          </div>
+          <div class="border-2 border-base-content/20 p-4">
+            <div class="text-3xl font-bold text-primary font-mono">AI</div>
+            <div class="text-sm text-base-content/60 uppercase tracking-wider">Augmented Dev</div>
+          </div>
+          <div class="border-2 border-base-content/20 p-4">
+            <div class="text-3xl font-bold text-primary font-mono">SQL</div>
+            <div class="text-sm text-base-content/60 uppercase tracking-wider">Python / Elixir</div>
+          </div>
+          <div class="border-2 border-base-content/20 p-4">
+            <div class="text-3xl font-bold text-primary font-mono">85%</div>
+            <div class="text-sm text-base-content/60 uppercase tracking-wider">Time Automated</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Section -->
+<section class="py-20 border-t-2 border-base-content/20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center gap-4 mb-12">
+      <h2 class="text-3xl font-bold uppercase tracking-wider">Latest Insights</h2>
+      <div class="flex-1 h-0.5 bg-base-content/20"></div>
+      <a href="/blog" class="font-mono text-sm text-primary hover:underline">VIEW ALL →</a>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <%= for post <- @posts do %>
+        <article class="border-2 border-base-content/30 p-6 post-card bg-base-100">
+          <div class="font-mono text-xs text-base-content/50 mb-4">
+            <%= Calendar.strftime(post.published_at, "%Y.%m.%d") %>
+          </div>
+          <h3 class="text-xl font-bold mb-3"><%= post.title %></h3>
+          <p class="text-sm text-base-content/70 mb-4">
+            <%= post.excerpt %>
+          </p>
+          <a href={"/blog/#{post.slug}"} class="inline-flex items-center gap-2 text-sm font-bold text-primary uppercase tracking-wider">
+            Read More <span>→</span>
+          </a>
+        </article>
+      <% end %>
+      
+      <%= if Enum.empty?(@posts) do %>
+        <div class="col-span-full text-center py-12 text-base-content/50">
+          <p class="text-lg">No posts yet. Check back soon!</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<!-- Expertise Section -->
+<section class="py-20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold uppercase tracking-wider mb-12 text-center">What I Do</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="border-l-4 border-primary pl-6 py-4">
+        <h3 class="text-xl font-bold mb-2">Automated Data Collection</h3>
+        <p class="text-base-content/70">
+          Eliminated manual data collection errors and reduced processing time by 85% by engineering 
+          automated pipelines that validate 23K+ monthly snapshots across hundreds of thousands of 
+          records using custom Python scripts, Oracle SQL, and Polars—preventing production incidents 
+          and maintaining regulatory compliance.
+        </p>
+      </div>
+      
+      <div class="border-l-4 border-secondary pl-6 py-4">
+        <h3 class="text-xl font-bold mb-2">Risk & Controls Reporting</h3>
+        <p class="text-base-content/70">
+          Accelerated executive risk reporting by 92% (from 1-2 hours to ~10 minutes) by building 
+          interconnected ERM reporting system that analyzes relationships across processes, risks, 
+          controls, and issues using async parallel extraction and DuckDB aggregations—enabling 
+          real-time decision support for 50+ stakeholders.
+        </p>
+      </div>
+      
+      <div class="border-l-4 border-accent pl-6 py-4">
+        <h3 class="text-xl font-bold mb-2">AI-Augmented Development</h3>
+        <p class="text-base-content/70">
+          Compressed development timelines from weeks to hours by architecting AI-powered ETL 
+          pipelines and modular frameworks using Claude API and custom Python automation—delivering 
+          production-ready analytics solutions that scale across enterprise data volumes while 
+          maintaining code quality and testing standards.
+        </p>
+      </div>
+      
+      <div class="border-l-4 border-info pl-6 py-4">
+        <h3 class="text-xl font-bold mb-2">Regulatory Intelligence</h3>
+        <p class="text-base-content/70">
+          Supported Federal Reserve examination readiness and proactive risk mitigation by serving 
+          as data intelligence SME—identifying critical patterns across enterprise risk data, 
+          synthesizing insights for executive reporting, and building analytics frameworks that 
+          support ongoing monitoring and regulatory compliance requirements.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact CTA -->
+<section class="py-20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="border-2 border-base-content p-8 md:p-12 text-center brutalist-shadow">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Let's Build Something</h2>
+      <p class="text-base-content/70 mb-8 max-w-2xl mx-auto">
+        Looking for someone who can combine data engineering, AI tooling, and regulatory expertise 
+        to solve complex analytics problems at scale.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="mailto:mosanyaayo@gmail.com" class="inline-flex items-center gap-2 px-8 py-4 bg-base-content text-base-100 font-bold uppercase tracking-wider hover:bg-primary hover:text-primary-content transition-colors">
+          Get In Touch
+          <span class="text-lg">→</span>
+        </a>
+        <a href="/blog" class="inline-flex items-center gap-2 px-8 py-4 border-2 border-base-content font-bold uppercase tracking-wider hover:bg-base-content hover:text-base-100 transition-colors">
+          Read My Blog
+          <span class="text-lg">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
