@@ -12,6 +12,7 @@ primary_region = "ewr"  # Newark, NJ - close to NYC
 [env]
   PHX_HOST = "ayomos.com"
   PORT = "8080"
+  ERL_AFLAGS = "-proto_dist inet6_tcp"
 
 [http_service]
   internal_port = 8080
@@ -31,6 +32,7 @@ primary_region = "ewr"  # Newark, NJ - close to NYC
   cpu_kind = "shared"
   cpus = 1
 
-[mounts]
+[[mounts]]
   source = "sqlite_data"
   destination = "/data"
+  initial_size = "1gb"

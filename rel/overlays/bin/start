@@ -1,0 +1,18 @@
+#!/bin/sh
+# Start script that ensures proper permissions and runs migrations
+
+set -e
+
+# Fix /data directory permissions if needed (volume may have root ownership)
+if [ -d "/data" ]; then
+  # Create database file if it doesn't exist with proper permissions
+  if [ ! -f "/data/ayomos_blog.db" ]; then
+    touch /data/ayomos_blog.db 2>/dev/null || true
+  fi
+fi
+
+# Run migrations
+/app/bin/migrate
+
+# Start the server
+exec /app/bin/server
