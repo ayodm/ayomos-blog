@@ -34,7 +34,8 @@ if config_env() == :prod do
 
   config :ayomos_blog, AyomosBlog.Repo,
     url: database_url,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "2"),
+    socket_options: [:inet6],
     ssl: true,
     ssl_opts: [
       verify: :verify_none  # Supabase uses self-signed certs
