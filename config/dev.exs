@@ -1,8 +1,9 @@
 import Config
 
-# Configure your database
+# Configure your database - use Supabase in dev too for consistency
+# You can also use a local postgres for development
 config :ayomos_blog, AyomosBlog.Repo,
-  database: Path.expand("../ayomos_blog_dev.db", __DIR__),
+  url: System.get_env("DATABASE_URL") || "postgresql://postgres:postgres@localhost:5432/ayomos_blog_dev",
   pool_size: 5,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true

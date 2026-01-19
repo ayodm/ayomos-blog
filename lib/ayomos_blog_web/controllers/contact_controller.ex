@@ -15,6 +15,15 @@ defmodule AyomosBlogWeb.ContactController do
 
     case Contact.validate_submission(contact_params) do
       {:ok, data} ->
+        # Get client metadata
+        ip = get_client_ip(conn)
+        ip_hash = :crypto.hash(:sha256, ip) |> Base.encode16() |> String.slice(0, 16)
+        user_agent = get_req_header(conn, "user-agent") |> List.first() || ""
+
+        # Save to database
+        metadata = %{ip_hash: ip_hash, user_agent: user_agent}
+        Contact.save_submission(data, metadata)
+
         # Send email asynchronously
         Task.start(fn ->
           Contact.send_contact_email(data)
@@ -46,5 +55,18 @@ defmodule AyomosBlogWeb.ContactController do
     |> assign(:page_title, "Contact")
     |> put_flash(:error, "Please fill out the contact form.")
     |> render(:new, errors: [], success: false)
+  end
+
+  defp get_client_ip(conn) do
+    forwarded = get_req_header(conn, "fly-client-ip") |> List.first()
+    x_forwarded = get_req_header(conn, "x-forwarded-for") |> List.first()
+    x_real_ip = get_req_header(conn, "x-real-ip") |> List.first()
+
+    cond do
+      forwarded -> forwarded
+      x_forwarded -> x_forwarded |> String.split(",") |> List.first() |> String.trim()
+      x_real_ip -> x_real_ip
+      true -> conn.remote_ip |> :inet.ntoa() |> to_string()
+    end
   end
 end

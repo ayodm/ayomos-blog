@@ -2,13 +2,46 @@ defmodule AyomosBlog.Contact do
   @moduledoc """
   Context for handling contact form submissions.
 
-  Includes spam protection and email sending.
+  Includes spam protection, database storage, and email sending.
   """
   alias AyomosBlog.Mailer
+  alias AyomosBlog.Repo
+  alias AyomosBlog.Analytics.ContactSubmission
   import Swoosh.Email
 
   @contact_email "info@ayomos.com"
   @from_email "noreply@ayomos.com"
+
+  @doc """
+  Saves a contact submission to the database.
+  """
+  def save_submission(data, metadata \\ %{}) do
+    %ContactSubmission{}
+    |> ContactSubmission.changeset(Map.merge(data, metadata))
+    |> Repo.insert()
+  end
+
+  @doc """
+  Lists all contact submissions.
+  """
+  def list_submissions do
+    require Ecto.Query
+    Ecto.Query.from(c in ContactSubmission, order_by: [desc: c.inserted_at])
+    |> Repo.all()
+  end
+
+  @doc """
+  Updates a submission's status.
+  """
+  def update_submission_status(id, status) do
+    case Repo.get(ContactSubmission, id) do
+      nil -> {:error, :not_found}
+      submission ->
+        submission
+        |> ContactSubmission.changeset(%{status: status})
+        |> Repo.update()
+    end
+  end
 
   @doc """
   Validates contact form data.

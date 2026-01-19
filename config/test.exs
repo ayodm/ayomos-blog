@@ -6,7 +6,7 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :ayomos_blog, AyomosBlog.Repo,
-  database: Path.expand("../ayomos_blog_test.db", __DIR__),
+  url: System.get_env("DATABASE_URL") || "postgresql://postgres:postgres@localhost:5432/ayomos_blog_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool_size: 5,
   pool: Ecto.Adapters.SQL.Sandbox
 

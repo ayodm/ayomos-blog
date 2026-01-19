@@ -24,16 +24,21 @@ config :ayomos_blog, AyomosBlogWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
 if config_env() == :prod do
-  database_path =
-    System.get_env("DATABASE_PATH") ||
+  # Supabase PostgreSQL connection
+  database_url =
+    System.get_env("DATABASE_URL") ||
       raise """
-      environment variable DATABASE_PATH is missing.
-      For example: /etc/ayomos_blog/ayomos_blog.db
+      environment variable DATABASE_URL is missing.
+      For example: postgresql://user:pass@db.xxxxx.supabase.co:5432/postgres
       """
 
   config :ayomos_blog, AyomosBlog.Repo,
-    database: database_path,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
+    url: database_url,
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    ssl: true,
+    ssl_opts: [
+      verify: :verify_none  # Supabase uses self-signed certs
+    ]
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
